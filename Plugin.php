@@ -404,9 +404,11 @@ $('.'+$("#tuisongtype :radio:checked").val()).show();
             } else {
                 $Subject = '你的《' . $comment->title . '》文章有了新的评论';
             }
+            $fromName = $plugin->fromName; // 发件人昵称
             foreach ($recipients as $recipient) {
             $param['to']=$recipient['mail']; // 收件地址
-            $param['fromName']=$recipient['name']; // 收件人名称
+            $param['recipientName']=$recipient['name']; // 收件人名称
+            $param['fromName']=$fromName; // 发件人昵称
             $param['subject']=$Subject; // 邮件标题
             $param['html']=self::mailBody($comment, $options, $type); // 邮件内容
             self::resendMail($param);
@@ -471,7 +473,7 @@ try {
             $mail->Port = $plugin->SMTPPort; // SMTP 端口
 
             $mail->setFrom($from, $fromName);
-            $mail->addAddress($param['to'], $param['fromName']); // 收件人
+            $mail->addAddress($param['to'], $param['recipientName']); // 收件人
             $mail->Subject =$param['subject'];
 
             $mail->isHTML(); // 邮件为HTML格式
@@ -517,7 +519,9 @@ try {
         // 返回数据
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         // 提交参数
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $param);
+        $apiParam = $param;
+        $apiParam['fromName'] = $plugin->fromName; // 确保使用插件配置的发件人昵称
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $apiParam);
         // 关闭ssl验证
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
@@ -618,7 +622,7 @@ try {
             'ReplyToAddress' => "true", // 回信地址
             'AddressType' => 1, // 地址类型
             'ToAddress' => $param['to'], // 收件地址
-            'FromAlias' => $param['fromName'], // 发件人名称
+            'FromAlias' => $plugin->fromName, // 发件人名称
             'Subject' => $param['subject'], // 邮件标题
             'HtmlBody' => $param['html'], // 邮件内容
             'Format' => 'JSON', // 返回JSON
