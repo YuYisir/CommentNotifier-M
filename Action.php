@@ -38,7 +38,7 @@ class CommentNotifier_Action extends Typecho_Widget implements Widget_Interface_
             $mail->Port = $plugin->SMTPPort; // SMTP 端口
 
             $mail->setFrom($from, $fromName);
-            $mail->addAddress($_REQUEST['to'], $_REQUEST['fromName']); // 收件人
+            $mail->addAddress($_REQUEST['to'], $_REQUEST['recipientName']); // 收件人
             
             $mail->Subject =$_REQUEST['subject'];
 

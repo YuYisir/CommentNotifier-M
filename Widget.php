@@ -89,8 +89,10 @@ class CommentNotifier_Widget extends Typecho_Widget
 
 
             /* 发送重置密码地址 */
+            $plugin = Options::alloc()->plugin('CommentNotifier');
             $param['to'] = $userRow['mail']; // 收件地址
-            $param['fromName'] = $userRow['name']; // 收件人名称
+            $param['recipientName'] = $userRow['name']; // 收件人名称
+            $param['fromName'] = $plugin->fromName; // 发件人昵称
             $param['subject'] = '密码重置' . date('Y-m-d H:i:s');// 邮件标题
             $param['html'] = '<p>' . $userRow['name'] . ' 您好，您申请了重置登录密码。</p>'
                 . '<br><p>请在 1 小时内点击此链接以完成重置 <a href="' . $url . '">' . $url . '</a></p>'
